@@ -65,12 +65,12 @@ pipeline {
                     job: 'fedora-ci/dist-git-build-pipeline/master',
                     wait: false,
                     parameters: [
-                        string(name: 'REPO_FULL_NAME', value: repoFullName),
-                        string(name: 'TARGET_BRANCH', value: targetBranch),
-                        string(name: 'PR_ID', value: prId),
-                        string(name: 'PR_UID', value: prUid),
-                        string(name: 'PR_COMMIT', value: prCommit),
-                        string(name: 'PR_COMMENT', value: prComment)
+                        string(name: 'REPO_FULL_NAME', value: "${repoFullName}"),
+                        string(name: 'TARGET_BRANCH', value: "${targetBranch}"),
+                        string(name: 'PR_ID', value: "${prId}"),
+                        string(name: 'PR_UID', value: "${prUid}"),
+                        string(name: 'PR_COMMIT', value: "${prCommit}"),
+                        string(name: 'PR_COMMENT', value: "${prComment}")
                     ]
                 )
             }
