@@ -43,6 +43,11 @@ pipeline {
                 script {
                     msg = readJSON text: CI_MESSAGE
 
+                    if (!msg) {
+                        currentBuild.result = 'ABORTED'
+                        error('No messages, nothing to do.')
+                    }
+
                     def lastComment = msg['pullrequest']['comments'][-1]
                     def lastCommentText = lastComment['comment'].trim()
 
