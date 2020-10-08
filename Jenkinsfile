@@ -3,6 +3,7 @@
 
 def msg
 def repoFullName
+def sourceRepoFullName
 def targetBranch
 def prId
 def prUid
@@ -62,6 +63,7 @@ pipeline {
                     }
 
                     repoFullName = msg['pullrequest']['project']['fullname']
+                    sourceRepoFullName = msg['pullrequest']['repo_from']['fullname']
                     targetBranch = msg['pullrequest']['branch']
                     prId = msg['pullrequest']['id']
                     prUid = msg['pullrequest']['uid']
@@ -79,6 +81,7 @@ pipeline {
                     wait: false,
                     parameters: [
                         string(name: 'REPO_FULL_NAME', value: "${repoFullName}"),
+                        string(name: 'SOURCE_REPO_FULL_NAME', value: "${sourceRepoFullName}"),
                         string(name: 'TARGET_BRANCH', value: "${targetBranch}"),
                         string(name: 'PR_ID', value: "${prId}"),
                         string(name: 'PR_UID', value: "${prUid}"),
