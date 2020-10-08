@@ -51,7 +51,7 @@ pipeline {
                     def lastComment = msg['pullrequest']['comments'][-1]
                     def lastCommentText = lastComment['comment'].trim()
 
-                    if (msg['pullrequest']['closed_at'] != null) {
+                    if (msg['pullrequest']['status'] != 'Open') {
                         currentBuild.result = 'ABORTED'
                         error('The pull-request is already closed, skipping...')
                     }
