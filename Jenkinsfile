@@ -22,8 +22,8 @@ pipeline {
                 rabbitMQSubscriber(
                     name: env.FEDORA_CI_MESSAGE_PROVIDER,
                     overrides: [
-                        topic: 'org.fedoraproject.prod.pagure.pull-request.comment.added',
-                        queue: 'osci-pipelines-queue-8'
+                        topic: 'org.fedoraproject.prod.pagure.pull-request.new',
+                        queue: 'osci-pipelines-queue-7'
                     ],
                     checks: [
                         [field: '$.pullrequest.project.namespace', expectedValue: '^rpms$']
@@ -43,25 +43,12 @@ pipeline {
                 script {
                     msg = readJSON text: CI_MESSAGE
 
-                    def lastComment = msg['pullrequest']['comments'][-1]
-                    def lastCommentText = lastComment['comment'].trim()
-
-                    if (msg['pullrequest']['closed_at'] != null) {
-                        currentBuild.result = 'ABORTED'
-                        error('The pull-request is already closed, skipping...')
-                    }
-
-                    if (lastCommentText != '[citest]' && !lastComment['notification']) {
-                        currentBuild.result = 'ABORTED'
-                        error("The comment is not a notification or it doesn't match '[citext]'")
-                    }
-
                     repoFullName = msg['pullrequest']['project']['fullname']
                     targetBranch = msg['pullrequest']['branch']
                     prId = msg['pullrequest']['id']
                     prUid = msg['pullrequest']['uid']
                     prCommit = msg['pullrequest']['commit_stop']
-                    prComment = lastComment['id']
+                    prComment = 0
                 }
             }
         }
