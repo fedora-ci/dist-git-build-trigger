@@ -23,7 +23,7 @@ pipeline {
                     name: env.FEDORA_CI_MESSAGE_PROVIDER,
                     overrides: [
                         topic: 'org.fedoraproject.prod.pagure.pull-request.comment.added',
-                        queue: 'osci-pipelines-queue-8'
+                        queue: 'osci-pipelines-queue-4'
                     ],
                     checks: [
                         [field: '$.pullrequest.project.namespace', expectedValue: '^rpms$']
