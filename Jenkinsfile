@@ -49,8 +49,8 @@ pipeline {
                         error('No messages, nothing to do.')
                     }
 
-                    repoFullName = msg['pullrequest']['project']['url_path']
-                    sourceRepoFullName = msg['pullrequest']['repo_from']['url_path']
+                    repoFullName = msg['pullrequest']['project']['fullname']
+                    sourceRepoFullName = msg['pullrequest']['repo_from']['fullname']
                     targetBranch = msg['pullrequest']['branch']
                     prId = msg['pullrequest']['id']
                     prUid = msg['pullrequest']['uid']
