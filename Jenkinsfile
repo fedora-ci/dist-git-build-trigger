@@ -43,6 +43,11 @@ pipeline {
                 script {
                     msg = readJSON text: CI_MESSAGE
 
+                    if (!msg) {
+                        currentBuild.result = 'ABORTED'
+                        error('No messages, nothing to do.')
+                    }
+
                     repoFullName = msg['pullrequest']['project']['fullname']
                     targetBranch = msg['pullrequest']['branch']
                     prId = msg['pullrequest']['id']
