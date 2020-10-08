@@ -24,7 +24,7 @@ pipeline {
                     overrides: [
                         topic: 'org.fedoraproject.prod.pagure.pull-request.comment.added',
                         queue: 'osci-pipelines-queue-8'
-                    ]
+                    ],
                     checks: [
                         [field: '$.pullrequest.project.namespace', expectedValue: '^rpms$']
                     ]
