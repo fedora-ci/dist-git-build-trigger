@@ -17,23 +17,23 @@ pipeline {
         label 'master'
     }
 
-    triggers {
-        ciBuildTrigger(
-            noSquash: true,
-            providerList: [
-                rabbitMQSubscriber(
-                    name: env.FEDORA_CI_MESSAGE_PROVIDER,
-                    overrides: [
-                        topic: 'org.fedoraproject.prod.pagure.pull-request.comment.added',
-                        queue: 'osci-pipelines-queue-8'
-                    ],
-                    checks: [
-                        [field: '$.pullrequest.project.namespace', expectedValue: 'rpms|tests']
-                    ]
-                )
-            ]
-        )
-    }
+    // triggers {
+    //     ciBuildTrigger(
+    //         noSquash: true,
+    //         providerList: [
+    //             rabbitMQSubscriber(
+    //                 name: env.FEDORA_CI_MESSAGE_PROVIDER,
+    //                 overrides: [
+    //                     topic: 'org.fedoraproject.prod.pagure.pull-request.comment.added',
+    //                     queue: 'osci-pipelines-queue-4'
+    //                 ],
+    //                 checks: [
+    //                     [field: '$.pullrequest.project.namespace', expectedValue: 'rpms|tests']
+    //                 ]
+    //             )
+    //         ]
+    //     )
+    // }
 
     parameters {
         string(name: 'CI_MESSAGE', defaultValue: '{}', description: 'CI Message')
