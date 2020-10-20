@@ -70,7 +70,7 @@ pipeline {
                         // This pull-request only modifies tests - no code changes,
                         // so we don't need to scratch-build anything
                         build(
-                            job: 'fedora-ci/dist-git-pipeline/tmt',
+                            job: 'fedora-ci/dist-git-pipeline/master',
                             wait: false,
                             parameters: [
                                 string(name: 'ARTIFACT_ID', value: "()->fedora-dist-git:${prUid}@${prCommit}#${prComment}"),
