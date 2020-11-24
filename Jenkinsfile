@@ -17,6 +17,11 @@ pipeline {
         label 'dist-git-build-trigger'
     }
 
+    options {
+        buildDiscarder(logRotator(daysToKeepStr: '45', artifactNumToKeepStr: '100'))
+        skipDefaultCheckout()
+    }
+
     triggers {
         ciBuildTrigger(
             noSquash: true,
