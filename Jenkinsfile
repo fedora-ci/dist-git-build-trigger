@@ -44,7 +44,7 @@ pipeline {
         stage('Trigger Testing') {
             steps {
                 script {
-                    msg = readJSON text: CI_MESSAGE
+                    msg = readJSON text: params.CI_MESSAGE
 
                     if (msg) {
                         msg['artifact']['builds'].each { build ->
