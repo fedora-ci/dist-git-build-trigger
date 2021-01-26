@@ -49,9 +49,9 @@ pipeline {
                     if (msg) {
                         def releaseId = msg['artifact']['release']
 
-                        msg['artifact']['builds'].each { build ->
-                            if (build['component'] in triggerComponents) {
-                                artifactId = "koji-build:${build['task_id']}"
+                        msg['artifact']['builds'].each { kojiBuild ->
+                            if (kojiBuild['component'].contains(triggerComponents) {
+                                artifactId = "koji-build:${kojiBuild['task_id']}"
 
                                 rebuildComponents.each { component ->
                                     build(
