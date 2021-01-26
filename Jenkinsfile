@@ -61,7 +61,8 @@ pipeline {
                                             string(name: 'ARTIFACT_ID', value: artifactId),
                                             string(name: 'BUILD_TARGET', value: "${releaseId}-updates-testing-pending"),
                                             string(name: 'TEST_SCENARIO', value: component),
-                                            string(name: 'REPO_FULL_NAME', value: "rpms/${component}")
+                                            string(name: 'REPO_FULL_NAME', value: "rpms/${component}"),
+                                            string(name: 'NVR', value: kojiBuild['nvr'])
                                         ]
                                     )
                                 }
