@@ -49,7 +49,7 @@ pipeline {
                     if (msg) {
                         def releaseId = msg['artifact']['release']
 
-                        msg['artifact']['builds'].each { kojiBuild ->
+                        msg['artifact']['builds'].any { kojiBuild ->
                             if (kojiBuild['component'] in triggerComponents) {
                                 artifactId = "koji-build:${kojiBuild['task_id']}"
 
@@ -65,7 +65,7 @@ pipeline {
                                         ]
                                     )
                                 }
-                                break
+                                return true  // break
                             }
                         }
                     }
