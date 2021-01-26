@@ -56,9 +56,9 @@ pipeline {
                                         job: 'fedora-ci/dist-git-build-pipeline/master',
                                         wait: false,
                                         parameters: [
-                                            string(name: 'ARTIFACT_ID', value: artifactId)
-                                            string(name: 'BUILD_TARGET', value: "${msg['artifact']['release']}-updates-testing-pending")
-                                            string(name: 'TEST_SCENARIO', value: "${component}")
+                                            string(name: 'ARTIFACT_ID', value: artifactId),
+                                            string(name: 'BUILD_TARGET', value: "${msg['artifact']['release']}-updates-testing-pending"),
+                                            string(name: 'TEST_SCENARIO', value: "${component}"),
                                             string(name: 'REPO_FULL_NAME', value: "rpms/${component}")
                                         ]
                                     )
