@@ -3,7 +3,7 @@
 def msg
 def artifactId
 
-def triggerComponents = ['glibc'] as Set
+def triggerComponents = ['annobin', 'binutils', 'glibc', 'gcc'] as Set
 def rebuildComponents = ['kernel'] as Set
 
 
