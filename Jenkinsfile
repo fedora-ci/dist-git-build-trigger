@@ -55,7 +55,7 @@ pipeline {
 
                                 rebuildComponents.each { component ->
                                     build(
-                                        job: 'fedora-ci/dist-git-build-pipeline/master',
+                                        job: 'fedora-ci/dist-git-build-pipeline/scratch-build',
                                         wait: false,
                                         parameters: [
                                             string(name: 'ARTIFACT_ID', value: artifactId),
