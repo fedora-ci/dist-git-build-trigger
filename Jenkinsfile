@@ -92,7 +92,7 @@ pipeline {
                             wait: false,
                             parameters: [
                                 string(name: 'ARTIFACT_ID', value: "()->fedora-dist-git:${prUid}@${prCommit}#${prComment}"),
-                                string(name: 'TEST_REPO_URL', value: "${env.FEDORA_CI_PAGURE_DIST_GIT_URL}/${sourceRepoFullName}#${prCommit}")
+                                string(name: 'TEST_REPO_URL', value: "${env.FEDORA_CI_PAGURE_DIST_GIT_URL}/${sourceRepoFullName}#${prCommit}"),
                                 string(name: 'TEST_PROFILE', value: "${env.FEDORA_CI_RAWHIDE_RELEASE_ID}")
                             ]
                         )
