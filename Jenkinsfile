@@ -1,16 +1,50 @@
 #!groovy
 
+retry (10) {
+    // load pipeline configuration into the environment
+    httpRequest("${FEDORA_CI_PIPELINES_CONFIG_URL}/environment").content.split('\n').each { l ->
+        l = l.trim(); if (l && !l.startsWith('#')) { env["${l.split('=')[0].trim()}"] = "${l.split('=')[1].trim()}" }
+    }
+}
+
+
+def config = [
+    "f33": [
+        "product_version": "fedora-33"
+    ],
+    "f34": [
+        "product_version": "fedora-34"
+    ],
+    "f35": [
+        "product_version": "fedora-35"
+    ],
+    "f36": [
+        "product_version": "fedora-36"
+    ],
+    "f37": [
+        "product_version": "fedora-37"
+    ],
+    "f38": [
+        "product_version": "fedora-38"
+    ],
+    "f39": [
+        "product_version": "fedora-39"
+    ]
+]
+
+
 def msg
 def artifactId
-
-def triggerComponents = ['annobin', 'binutils', 'glibc', 'gcc'] as Set
-def rebuildComponents = ['kernel'] as Set
+def allTaskIds = [] as Set
+def allBuilds = [:]
 
 
 pipeline {
 
-    agent {
-        label 'dist-git-build-trigger'
+    agent none
+
+    libraries {
+        lib("fedora-pipeline-library@08813c663ff9a05335ed50ba17a0a66cbcd4f971")
     }
 
     options {
@@ -29,7 +63,7 @@ pipeline {
     //                    queue: 'osci-pipelines-queue-0'
     //                ],
     //                checks: [
-    //                    [field: '$.artifact.release', expectedValue: '^f34$']
+    //                    [field: '$.artifact.release', expectedValue: '^f[3-9]{1}[2-9]{1}$']
     //                ]
     //            )
     //        ]
@@ -45,34 +79,53 @@ pipeline {
             steps {
                 script {
                     msg = readJSON text: params.CI_MESSAGE
+                    def packages = [] as Set
 
                     if (msg) {
+                        msg['artifact']['builds'].each { build ->
+                            allTaskIds.add(build['task_id'])
+                            allBuilds[build['task_id']] = build['nvr']
+                        }
                         def releaseId = msg['artifact']['release']
-                        def targetBranch = releaseId
-                        if (releaseId == env.FEDORA_CI_RAWHIDE_RELEASE_ID) {
-                            targetBranch = 'master'
+                        def productVersion = config[releaseId]['product_version']
+                        def nvr
+                        def filteredReqs
+
+                        if (allTaskIds) {
+                            allTaskIds.each { taskId ->
+                                artifactId = "koji-build:${taskId}"
+                                nvr = allBuilds[taskId]
+
+                                echo "Querying greenwave for ${nvr} ..."
+                                filteredReqs = getGatingRequirements(
+                                    artifactId: artifactId,
+                                    decisionContext: 'bodhi_update_push_testing',
+                                    productVersion: productVersion,
+                                    scenarioPrefix: 'rebuild/',
+                                    testcase: 'fedora-ci.koji-build.scratch-build.validation'
+                                )
+                                echo "filtered: ${filteredReqs}"
+
+                                filteredReqs.each { req ->
+                                    packages.add(req.get('scenario').split('/')[1])
+                                }
+                            }
                         }
 
-                        msg['artifact']['builds'].any { kojiBuild ->
-                            if (kojiBuild['component'] in triggerComponents) {
-                                artifactId = "koji-build:${kojiBuild['task_id']}"
-
-                                rebuildComponents.each { component ->
-                                    build(
-                                        job: 'fedora-ci/dist-git-build-pipeline/scratch-build',
-                                        wait: false,
-                                        parameters: [
-                                            string(name: 'ARTIFACT_ID', value: artifactId),
-                                            string(name: 'BUILD_TARGET', value: "${releaseId}-build"),
-                                            string(name: 'TARGET_BRANCH', value: "${targetBranch}"),
-                                            string(name: 'TEST_SCENARIO', value: component),
-                                            string(name: 'REPO_FULL_NAME', value: "rpms/${component}"),
-                                            string(name: 'NVR', value: kojiBuild['nvr'])
-                                        ]
-                                    )
-                                }
-                                return true  // break
+                        if (packages) {
+                            packages.each { pkg ->
+                                build(
+                                    job: 'fedora-ci/dist-git-build-pipeline/scratch-rebuild',
+                                    wait: false,
+                                    parameters: [
+                                        string(name: 'ARTIFACT_ID', value: artifactId),
+                                        string(name: 'PACKAGE_NAME', value: pkg),
+                                        string(name: 'TEST_PROFILE', value: releaseId)
+                                    ]
+                                )
                             }
+                        } else {
+                            echo "The rebuild test is not enabled for any of the components in this update..."
                         }
                     }
                 }
