@@ -69,7 +69,7 @@ pipeline {
                         error('The pull-request is already closed, skipping...')
                     }
 
-                    if (lastCommentText != '[citest]' && !lastComment['notification']) {
+                    if (!lastCommentText.contains('[citest]') && !lastComment['notification']) {
                         currentBuild.result = 'ABORTED'
                         error("The comment is not a notification or it doesn't match '[citext]'")
                     }
