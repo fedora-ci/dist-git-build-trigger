@@ -19,9 +19,7 @@ def namespace
 
 pipeline {
 
-    agent {
-        label 'dist-git-build-trigger'
-    }
+    agent none
 
     options {
         buildDiscarder(logRotator(daysToKeepStr: '45', artifactNumToKeepStr: '100'))
@@ -33,7 +31,7 @@ pipeline {
             noSquash: true,
             providerList: [
                 rabbitMQSubscriber(
-                    name: env.FEDORA_CI_MESSAGE_PROVIDER,
+                    name: 'RabbitMQ',
                     overrides: [
                         topic: 'org.fedoraproject.prod.pagure.pull-request.comment.added',
                         queue: 'osci-pipelines-queue-4'
